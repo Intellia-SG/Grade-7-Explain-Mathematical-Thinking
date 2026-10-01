@@ -82,35 +82,90 @@ npm run build
 
 ---
 
-## 🛠️ Architecture & Adding New Levels
+## 🕹️ The 5-Beat Simulation Loop
 
-The simulation is data-driven and lives in [`src/data/simulationLevels.js`](file:///c:/Users/asus/OneDrive/Desktop/Grade-7-Explain%20Mathematical%20Thinking/src/data/simulationLevels.js).
+Every simulation level runs on a rigorous, gamified 5-beat cognitive loop:
+1. **PREDICT (The Reasoning Bet):**
+   - Students select a prediction and stake a confidence level (*Just Guessing / Pretty Sure / 100% Locked In*).
+   - Calibrated bets earn bonus XP. If the prediction is wrong, Whyzo celebrates: *"Whoa, plot twist!"* and awards a Curiosity Bonus (+10 XP) with zero penalty.
+2. **EXPERIMENT (Hands-on Sandbox):**
+   - Students manipulate dynamic, animated physical toys (dumpling conveyors, haggling price meters, resizable solar arrays, bridge load gauges, port container cranes, physical balance scales).
+   - Enforces a 5-second discovery tracker to encourage genuine manipulation before rushing.
+   - Every action plays synthesized audio feedback and logs data directly to the live Evidence Board.
+3. **NOTICE (The Live Evidence Board):**
+   - Collects trials automatically as structured cards.
+   - Whyzo asks one curiosity question: *"Do you see a pattern in the evidence cards?"*
+   - A Pattern Meter fills to 100% as consistent evidence accumulates.
+4. **CHALLENGE (Can You Break It?):**
+   - Students stress-test claims with edge cases and extreme values.
+   - For false claims (Levels 2 & 3), students trigger counterexamples, firing a spectacular **"CLAIM BUSTED! 💥"** animation.
+   - For always-true claims (Levels 1, 4, 5, 6), students discover that no matter how many examples are tested, infinite cases remain, showing why formal proof is indispensable!
+5. **GENERALISE / PROVE (Visual Proof & CER Sentence Builder):**
+   - Explores a generalized visual representation (Mystery Crates with $n$ pairs, Multiplier Spectrum, Unit Square Partition, Vector Physics, Sequence Growth Formula, Equality Invariance).
+   - Concludes with the **Claim-Evidence-Reason (CER)** builder: drag or tap word chips into `[Claim 🟦]`, `[Evidence 🟨]`, and `[Reason 🟩]` slots, verified by Whyzo.
 
-To add a new mission:
-1. Open `src/data/simulationLevels.js`.
-2. Add a new level object to `SIMULATION_LEVELS`:
+---
+
+## 📚 What Each Level's Simulation Teaches
+
+| Level | Mission & World | Mathematical Claim & Concept | Interactive Toy Mechanic | Proof / Generalisation |
+|---|---|---|---|---|
+| **L1** | **The Tokyo Bento Rush** (Tokyo) | Odd + Odd = Even (Parity) | 2-Pack Dumpling Packing Machine & Conveyor Belt. Leftovers slide and magnetically fuse into a new box. | **Mystery Bento Crate:** Any unknown odd order $(2n + 1) + (2m + 1)$ leaves zero leftovers because $1 + 1 = 2$. |
+| **L2** | **The Cairo Market Discount** (Cairo) | Multiplying by positive numbers does NOT always increase value ($x \times m > x$ is only sometimes true). | Khan el-Khalili Bazaar Haggling Machine with live discount multipliers, price tag cards, and stacked discounts ($20\% + 10\% \neq 30\%$). | **Multiplier Spectrum Map:** Visualizing the Shrink Zone ($0 < m < 1$), Identity ($m = 1$), and Growth Zone ($m > 1$). |
+| **L3** | **The Shrinking Solar Panel Myth** (Space Station) | Squaring numbers between 0 and 1 shrinks area ($0.5^2 = 0.25 < 0.5$). | Resizable micro-solar array on a satellite roof. Dynamic edge dragging vs actual unit-square area count. | **Fractional Area Grid:** 100 hundredths grid showing why half of a half is 25 hundredths ($0.25\text{ m}^2$). |
+| **L4** | **Bandra-Worli Bridge Load Audit** (Mumbai) | Subtracting a negative vector is equivalent to adding a positive vector ($-5 - (-8) = -5 + 8 = +3\text{ MN}$). | Sea Link bridge cable tension scanner with dynamic stress needle gauge, wind gusts, and sign auditor. | **Vector Reversal Number Line:** Facing left and walking backwards moves in the positive direction ($+8$). |
+| **L5** | **Mumbai Port Container Sequence** (JN Port) | Order of Operations (PEMDAS/BODMAS) & Sequence Rules ($6 + 4 \times 5 = 26\text{t}$, not $50\text{t}$). | Gantry crane stacking 5-ton crates on a 6-ton base container, with ⚡ Fast-Forward button for large terms. | **Algebraic Sequence Formula:** $T(n) = 6 + 5n$, showing why grouped multiplication must evaluate before addition. |
+| **L6** | **The Grand Proof Tribunal** (Supreme Court) | Algebraic equivalence invariance and inverse operations ($2x + 6 = 20 \Rightarrow x = 7$). | 2-pan physical balance beam. Rebutting Skeptic flaws and executing balanced inverse operations to drop Skeptic doubt to 0%. | **Golden Axiom of Equality:** If $A = B$, then $A - C = B - C$ and $A \div D = B \div D$. |
+
+---
+
+## 🛠️ How to Add a New Simulation Level
+
+1. **Open [`src/data/simulationLevelsData.js`](file:///c:/Users/asus/OneDrive/Desktop/Grade-7-Explain%20Mathematical%20Thinking/src/data/simulationLevelsData.js):**
+   Add a new level definition following the 5-beat schema:
    ```javascript
    {
      id: 7,
      levelNumber: 7,
      title: "My New Challenge",
      difficulty: "Tricky",
-     toy: "rocket_catapult", // 'dumpling_collider' | 'rocket_catapult' | 'bridge_scanner' | 'balance_scale'
-     realWorld: {
-       scenario: "Real-world context",
-       title: "Context Title",
-       icon: "🚀",
-       story: "Narrative...",
-       fact: "Did you know..."
+     theme: "custom",
+     toy: "custom_toy",
+     realWorld: { scenario: "...", title: "...", icon: "⚡", story: "...", fact: "..." },
+     mission: "...",
+     claimText: "...",
+     claimVerdict: "always", // 'always' | 'sometimes' | 'never'
+     predict: { question: "...", options: [...], confidenceLevels: [...] },
+     experiment: { instructions: "...", minSeconds: 5, presets: [...] },
+     notice: { curiosityQuestion: "...", patternInsight: "...", targetTrialsNeeded: 3 },
+     challenge: { prompt: "...", hint: "...", isCounterexamplePossible: false, ... },
+     prove: {
+       title: "...",
+       subtitle: "...",
+       slots: { claim: "...", evidence: "...", reason: "..." },
+       chips: [ { id: 'c1', type: 'claim', text: "..." }, ... ]
      },
-     mission: "Mission prompt...",
-     predictQuestion: "What will happen if...?",
-     predictOptions: [ ... ],
-     hintLadder: [ "Nudge...", "Clue...", "Solution..." ],
-     reflection: { ... }
+     hintLadder: [ "Nudge...", "Strategy...", "Worked Step..." ],
+     misconception: "..."
    }
    ```
-3. The UI, star system, mini-dashboard, and level tabs update automatically!
+2. **Create the Interactive Toy Component in `src/components/simulate/toys/L7CustomToy.jsx`:**
+   - Accepts `{ onTrialComplete, isMysteryMode }`.
+   - Calls `onTrialComplete({ trialText, leftoverNote, isCounterexample, tag })` whenever the user manipulates the toy.
+   - When `isMysteryMode === true`, renders the general proof visualizer.
+3. **Register the Toy in `src/components/SimulatePhase.jsx`:**
+   - Import the lazy component:
+     ```javascript
+     const L7CustomToy = lazy(() => import('./simulate/toys/L7CustomToy'));
+     ```
+   - Add to `TOY_COMPONENTS`:
+     ```javascript
+     const TOY_COMPONENTS = {
+       ...
+       7: L7CustomToy
+     };
+     ```
+4. The level tabs, 5-beat stepper, Evidence Board, Pattern Meter, XP rewards, and CER validation will automatically configure and run!
 
 ---
 
